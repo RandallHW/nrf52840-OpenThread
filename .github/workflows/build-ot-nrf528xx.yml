@@ -35,23 +35,32 @@ jobs:
           python3-pip
         pip3 install --upgrade pip
         pip3 install nrfutil
-
+    # Debug
+    - name: Debug: list patch file
+      working-directory: ot-nrf528xx
+      run: |
+        pwd
+        git rev-parse --short HEAD
+        ls -la
+        ls -la patches || true
+        ls -la patches/cli_autostart.patch || true
+      
     # Step 3: Bootstrap the project
     - name: Bootstrap the project
       working-directory: ot-nrf528xx
       run: ./script/bootstrap
 
     # Step 4: Build UART version
-    - name: Build nRF52840 UART Example
-      working-directory: ot-nrf528xx
-      run: ./script/build nrf52840 UART_trans
+    #- name: Build nRF52840 UART Example
+    #  working-directory: ot-nrf528xx
+    #  run: ./script/build nrf52840 UART_trans
 
     # Step 5: Rename UART ELF and HEX files
-    - name: Rename UART binaries
-      working-directory: ot-nrf528xx
-      run: |
-        mv build/bin/ot-cli-ftd build/bin/ot-cli-ftd-UART
-        arm-none-eabi-objcopy -O ihex build/bin/ot-cli-ftd-UART build/bin/ot-cli-ftd-UART.hex
+    #- name: Rename UART binaries
+    #  working-directory: ot-nrf528xx
+    #  run: |
+    #    mv build/bin/ot-cli-ftd build/bin/ot-cli-ftd-UART
+    #    arm-none-eabi-objcopy -O ihex build/bin/ot-cli-ftd-UART build/bin/ot-cli-ftd-UART.hex
 
     # Step 6: Build USB version
     - name: Build nRF52840 USB Example
@@ -65,12 +74,12 @@ jobs:
         mv build/bin/ot-cli-ftd build/bin/ot-cli-ftd-USB
         arm-none-eabi-objcopy -O ihex build/bin/ot-cli-ftd-USB build/bin/ot-cli-ftd-USB.hex
     
-  # Step 8: Rename RCP ELF and HEX files
-    - name: Rename RCP binaries
-      working-directory: ot-nrf528xx
-      run: |
-        mv build/bin/ot-rcp build/bin/ot-rcp-USB
-        arm-none-eabi-objcopy -O ihex build/bin/ot-rcp-USB build/bin/ot-rcp-USB.hex
+   # Step 8: Rename RCP ELF and HEX files
+   #- name: Rename RCP binaries
+   #  working-directory: ot-nrf528xx
+   #  run: |
+   #    mv build/bin/ot-rcp build/bin/ot-rcp-USB
+   #    arm-none-eabi-objcopy -O ihex build/bin/ot-rcp-USB build/bin/ot-rcp-USB.hex
         
     # Step 9: Upload artifacts
     - name: Upload binaries
@@ -78,11 +87,11 @@ jobs:
       with:
         name: ot-nrf528xx-binaries
         path: |
-          ot-nrf528xx/build/bin/ot-cli-ftd-UART
-          ot-nrf528xx/build/bin/ot-cli-ftd-UART.hex
+          #ot-nrf528xx/build/bin/ot-cli-ftd-UART
+          #ot-nrf528xx/build/bin/ot-cli-ftd-UART.hex
           ot-nrf528xx/build/bin/ot-cli-ftd-USB
           ot-nrf528xx/build/bin/ot-cli-ftd-USB.hex
-          ot-nrf528xx/build/bin/ot-rcp-USB
-          ot-nrf528xx/build/bin/ot-rcp-USB.hex
+          #ot-nrf528xx/build/bin/ot-rcp-USB
+          #ot-nrf528xx/build/bin/ot-rcp-USB.hex
 
 
