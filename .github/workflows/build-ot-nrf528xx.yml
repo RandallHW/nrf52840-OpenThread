@@ -62,30 +62,18 @@ jobs:
     #    mv build/bin/ot-cli-ftd build/bin/ot-cli-ftd-UART
     #    arm-none-eabi-objcopy -O ihex build/bin/ot-cli-ftd-UART build/bin/ot-cli-ftd-UART.hex
 
-    
-    # Step 6: Build ONLY the USB CLI-FTD app
-    - name: Build USB CLI-FTD only
+    # Step 6: Build USB version
+    - name: Build nRF52840 USB Example
+      working-directory: ot-nrf528xx
+      run: ./script/build nrf52840 USB_trans -DOT_BOOTLOADER=USB
+
+    # Step 7: Rename USB ELF and HEX files
+    - name: Rename USB binaries
       working-directory: ot-nrf528xx
       run: |
-        # fresh build directory to avoid stale targets
-        rm -rf build
-        # Build only the target we need and do not generate other apps
-        OT_CMAKE_NINJA_TARGET=ot-cli-ftd \
-        ./script/build nrf52840 USB_trans \
-          -DOT_BOOTLOADER=USB \
-          -DOT_APP_CLI=ON -DOT_FTD=ON \
-          -DOT_MTD=OFF -DOT_APP_NCP=OFF -DOT_APP_RCP=OFF -DOT_RCP=OFF
-
-    
-    # Step 7: Emit HEX for USB CLI-FTD
-    - name: Generate HEX for USB CLI-FTD
-      working-directory: ot-nrf528xx
-      run: |
-        # Keep your -USB naming convention for clarity
-        cp build/bin/ot-cli-ftd build/bin/ot-cli-ftd-USB
-        arm-none-eabi-objcopy -O ihex build/bin/ot-cli-ftd-USB build/bin/ot-cli-ftd-USB.hex
-
-    
+        mv build/bin/ot-cli-ftd build/bin/ot-cli-ftd-USB
+        arm-none-eabi-objcopy -O ihex build/bin/ot-cli-ftd-USB build/bin/ot-cli-ftd-USB.hex    
+        
    # Step 8: Rename RCP ELF and HEX files
    #- name: Rename RCP binaries
    #  working-directory: ot-nrf528xx
