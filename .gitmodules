@@ -1,3 +1,3 @@
 [submodule "ot-nrf528xx"]
 	path = ot-nrf528xx
-	url = https://github.com/openthread/ot-nrf528xx.git
+	url = https://github.com/RandallHW/ot-nrf528xx.git
