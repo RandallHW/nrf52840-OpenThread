@@ -36,7 +36,7 @@ jobs:
         pip3 install --upgrade pip
         pip3 install nrfutil
     # Debug
-    - name: Debug: list patch file
+    - name: Debug list patch file
       working-directory: ot-nrf528xx
       run: |
         pwd
