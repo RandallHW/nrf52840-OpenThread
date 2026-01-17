@@ -1,4 +1,4 @@
-name: Build OpenThread nRF52840 Examples
+name: Build OpenThread nRF52840
 
 on:
   push:
@@ -20,6 +20,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         submodules: recursive
+        fetch-depth: 0
 
     # Step 2: Set up dependencies
     - name: Install dependencies
