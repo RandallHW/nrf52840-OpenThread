@@ -1,4 +1,4 @@
-name: Build OpenThread nRF52840
+name: Build OpenThread CLI FTD USB
 
 on:
   push:
