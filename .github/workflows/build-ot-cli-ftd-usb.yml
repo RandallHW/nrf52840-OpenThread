@@ -1,4 +1,4 @@
-name: Build OpenThread CLI FTD USB
+name: Build OT CLI FTD USB
 
 on:
   push:
