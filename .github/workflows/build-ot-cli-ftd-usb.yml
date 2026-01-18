@@ -1,0 +1,77 @@
+name: Build OpenThread nRF52840
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build OpenThread nRF52840
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the code
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+        fetch-depth: 0
+
+    # Step 2: Set up dependencies
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          gcc-arm-none-eabi \
+          make \
+          cmake \
+          git \
+          libstdc++-arm-none-eabi-newlib \
+          python3-pip
+        pip3 install --upgrade pip
+        pip3 install nrfutil
+    # Debug
+    - name: Debug list patch file
+      working-directory: ot-nrf528xx
+      run: |
+        pwd
+        git rev-parse --short HEAD
+        ls -la
+        ls -la patches || true
+        ls -la patches/cli_autostart.patch || true
+      
+    # Step 3: Bootstrap the project
+    - name: Bootstrap the project
+      working-directory: ot-nrf528xx
+      run: ./script/bootstrap
+
+    # Build OT CLI FTD USB only
+    - name: Build USB CLI-FTD only
+      working-directory: ot-nrf528xx
+      run: |
+        rm -rf build
+        OT_CMAKE_NINJA_TARGET=ot-cli-ftd \
+        ./script/build nrf52840 USB_trans \
+          -DOT_BOOTLOADER=USB \
+          -DOT_APP_CLI=ON -DOT_FTD=ON \
+          -DOT_MTD=OFF -DOT_APP_NCP=OFF -DOT_APP_RCP=OFF -DOT_RCP=OFF
+
+        # Emit your HEX artifact
+        cp build/bin/ot-cli-ftd build/bin/ot-cli-ftd-USB
+        arm-none-eabi-objcopy -O ihex build/bin/ot-cli-ftd-USB build/bin/ot-cli-ftd-USB.hex
+        
+    # Step 9: Upload artifacts
+    - name: Upload binaries
+      uses: actions/upload-artifact@v4
+      with:
+        name: ot-nrf528xx-binaries
+        path: |
+          ot-nrf528xx/build/bin/ot-cli-ftd-USB
+          ot-nrf528xx/build/bin/ot-cli-ftd-USB.hex
+
+
