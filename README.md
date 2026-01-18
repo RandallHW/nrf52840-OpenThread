@@ -31,11 +31,24 @@ Instructions are for nRF connect method.
 
 Once set up and connected to thread, the nRF52840 can be plugged into a USB power brick (or whatever) and it will join your thread mesh.
 If you need to change thread networks or just start all over, enter the command: factoryreset (and go back up to step 2).
-To confirm the thread details on the device, these commands can come in handy:
-dataset active -x
+To confirm the thread details on the device or general troubleshooting, these commands can come in handy:
+state
+dataset active -x 
 channel
 panid
-<add more>
+extpanid
+networkname
+networkkey
+thread start/stop
+scan
+scan energy
+ipaddr
+ipmaddr
+neighbor table
+router table
+rloc16
+eui64
+
 
 ## License
 
