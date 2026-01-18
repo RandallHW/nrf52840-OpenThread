@@ -1,4 +1,4 @@
-# OpenThread [nRF52840](https://mou.sr/3AkvVTz) Firmware Builder
+# OpenThread [nRF52840](https://mou.sr/3AkvVTz) Firmware Builder.
 
 This repository automatically builds the latest version of the OpenThread firmware for the nRF52840 platform. The firmware includes both UART and USB versions, which can be downloaded directly from the **Actions** tab in this GitHub repository.
 
