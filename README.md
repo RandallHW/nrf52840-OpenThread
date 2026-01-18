@@ -1,72 +1,41 @@
 # OpenThread [nRF52840](https://mou.sr/3AkvVTz) Firmware Builder.
 
-This repository automatically builds the latest version of the OpenThread firmware for the nRF52840 platform. The firmware includes both UART and USB versions, which can be downloaded directly from the **Actions** tab in this GitHub repository.
-
-## Overview
-
-The build process ensures the most up-to-date OpenThread firmware for nRF52840 by leveraging GitHub Actions. Both versions of the firmware (UART and USB) are built and tagged accordingly:
-
-- **UART Version**: `ot-cli-ftd-UART.hex`
-- **USB Version**: `ot-cli-ftd-USB.hex`
-- **USB Radio Co-Processo**: `ot-rcp-USB.hex`
-
-Firmware is published as part of [bi-monthly releases](https://github.com/ArthFink/nrf52840-OpenThread/releases), which include precompiled binaries for different use cases supported versions.
-
-## How to Download the Firmware
-
-1. Go to the [Releases page](https://github.com/ArthFink/nrf52840-OpenThread/releases).
-2. Select the most recent release (release 07/2025 known good).
-3. Download the appropriate firmware file for your device and use case from the Assets section.
-   - For use with OpenThread Border Router, a Radio Co-Processor (RPC) image is required.
-   
+This fork creates an autostarting thread ftd radio with cli and usb on the nRF52840-Dingle - intended to be a plug-and-play extension for your thread mesh.
+ 
 ## How to Flash the Firmware
 
-### USB Version
-
-To flash the USB version (`ot-rcp-USB.hex`), you can use either the **nRF Connect for Desktop** application or the **nrfjprog** command-line tool. Follow the steps below based on your preferred method:
-
-#### Using nRF Connect for Desktop
+To flash the USB version (`ot-rcp-USB.hex`), you can use either the **nRF Connect for Desktop** application or the **nrfjprog** command-line tool.
+Instructions are for nRF connect method.
 
 1. Download and install [nRF Connect for Desktop](https://www.nordicsemi.com/Products/Development-tools/nRF-Connect-for-desktop) if not already installed.
 2. Launch **nRF Connect for Desktop** and open the **Programmer Tool**.
 3. Put the nRF52840 dongle into **program mode**:
    - Insert the dongle into a USB port on your computer.
-   - Hold down the reset button while inserting the dongle until the LED blinks rapidly. This indicates the device is in program mode.
-4. In the Programmer Tool, select the detected nRF52840 dongle from the device list.
-5. Click **Add file** and choose the `ot-rcp-USB.hex` file.
-6. Ensure the **Erase & Write** option is selected.
-7. Click **Write** to flash the firmware onto the dongle.
+   - Hold down the reset button while inserting the dongle until the LED blinks slowly. Or double press reset button until LED blinks slowly.
+   - This indicates the device is in program mode.
+4. In the Programmer Tool, select the detected nRF52840 dongle from the device list, it should say DFU Bootloader.
+5. Drag the ot-clie-ftd-USB.hex file into the add files section.
+6. Click **Write** to flash the firmware onto the dongle.
 
-#### Using nrfjprog
+## Add to Home Assistant OTBR Thread Network.
+1. After flashing the nRF52840 hex code, the dongle should now be seen as a new serial port. Check you device manager (or whatever) to confirm the serial port.
+2. Use putty (or similar) to connect to the serial port port at 115200,8,1,N and no flow control.
+3. You should get a prompt and commands such as help or state or reset should work.  There should be redimentary boot logs displaying.
+4. The network connection must be down to make changes to thread paramters: ifconfig down
+5. Get the Active TLV from OTBR.  In HA go to Settings -> Thread -> then the information icon in yor preferred network.  Copy the TLV.
+6. Back in putty (or whatever): dataset set active <paste your TLV>
+7. Commit the dataset: dataset commit active
+8. Bring up the network interface: ifconfig up
+9. Ensure thread if up (it probably already is): thread start
+10. Check the thread device status (within a few seconds it should have joined the thread network): state
 
-If you prefer using the command-line tool, **nrfjprog** (part of the [nRF Command Line Tools](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools)) can also flash the USB firmware.
-
-1. Put the nRF52840 dongle into **program mode**:
-   - Insert the dongle into a USB port.
-   - Hold down the reset button while inserting it, until the LED starts blinking rapidly.
-
-2. Flash the USB firmware:
-   - Use the following command:
-     ```bash
-     nrfjprog --program ot-rcp-USB.hex--sectorerase --reset
-     ```
-
-3. Verify the flashing process:
-   - After flashing, the device should start running the new firmware.
-
-**Note**: The `--sectorerase` flag ensures only the necessary sectors are erased, preserving the bootloader on the USB dongle.
-
-### UART Version
-
-Once you have downloaded the firmware, you can flash it onto your nRF52840 device using `nrfjprog` (part of the [nRF Command Line Tools](https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools)):
-
-```bash
-nrfjprog -f nrf52 --chiperase --program ot-cli-ftd-UART.hex --reset
-```
-
-## Home Assistant 
-
-👉 For Home Assistant setup instructions, check out [homeassisten-setup-otbr.md](./homeassisten-setup-otbr.md).
+Once set up and connected to thread, the nRF52840 can be plugged into a USB power brick (or whatever) and it will join your thread mesh.
+If you need to change thread networks or just start all over, enter the command: factoryreset (and go back up to step 2).
+To confirm the thread details on the device, these commands can come in handy:
+dataset active -x
+channel
+panid
+<add more>
 
 ## License
 
